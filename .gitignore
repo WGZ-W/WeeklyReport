@@ -1,0 +1,15 @@
+# PDF 
+*.pdf
+
+# PPT
+*.pptx
+*.pptx
+
+# Latex
+*.aux
+*.log
+*.gz
+*.zip
+
+# Word
+*.docx

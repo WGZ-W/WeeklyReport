@@ -1,0 +1,297 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Weekly Report: created by MW, 2003 and Modified by Joohyun, 2009
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\documentclass[10pt,letterpaper,oneside]{article}
+\usepackage{cite,graphicx,subfigure,amsmath,amsthm,amssymb,epsfig,pifont}
+\usepackage[UTF8]{ctex} % 加载 ctex 宏包
+
+\setlength{\textwidth}{15.25cm}%
+\setlength{\textheight}{23cm}%
+\setlength{\oddsidemargin}{0 cm}%
+\setlength{\evensidemargin}{0 cm}%
+\setlength{\topskip}{0 cm}%
+\setlength{\topmargin}{-1 cm}%
+\setlength{\headheight}{0 cm}%
+
+%\usepackage{eufrak}
+% \pagestyle{empty}
+
+\textwidth  6.6in
+\textheight 9.1in
+\setlength{\oddsidemargin}{-0.04 in}
+\setlength{\topmargin}{-0.7in}
+
+\newcommand{\weekly}[5]{
+    \pagestyle{plain}
+    \newpage
+    \setcounter{page}{1}
+    \noindent
+    \begin{center}
+    \begin{tabular}[t]{||c||c||c||}
+    \hline\hline\hspace{3mm}\rule[-3mm]{0mm}{10mm}
+    \textbf{\Large{#3 #2}}\hspace{3mm} &\hspace{3mm}\textbf{\Large{Report\##5 - #4/#2}}\hspace{3mm} &\hspace{3mm}\textbf{\Large{#1}}\hspace{3mm}
+    \\ \hline\hline
+    \end{tabular}
+    \end{center}
+    %\markboth{#1}{#1}
+    \vspace*{4mm}
+}
+
+\begin{document}
+
+%% Main Title Section %%
+\weekly{Wei Guanzhao}{2026}{Spring}{07/03}{03}
+
+
+
+
+%%%%%%%%%%%%%%%% I. Task achieved in this week section %%%%%%%%%%%%%%%%%
+\vspace{1 mm}
+\begin{picture}(10,0)\linethickness{0.5 mm}
+\put(-25,0){\line(1,0){500}}
+\end{picture}
+\vspace{2 mm}
+
+\noindent\textbf{\large{I. Tasks achieved Last Week}}
+
+\begin{picture}(10,0) \linethickness{0.5 mm}
+\put(-25,0){\line(1,0){500}}
+\end{picture}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{itemize} %\setlength\itemsep{-\parsep}   %
+  \item[\normalsize{\ding{110}}] 解决 AerialVLN 代码中的 bug，开始训练  \vspace{-3 mm}\\
+  % \subitem {\footnotesize{\ding{108}}} 
+  % \item[\normalsize{\ding{110}}] 跟蒋老师学习具身智能  \vspace{-3 mm}\\
+\end{itemize}                      % --> To Here
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+%%%%%%%%%%%%%%%%% II. Feedback and Interaction section %%%%%%%%%%%%%%%
+% \vspace{1 mm}
+% \begin{picture}(10,0)\linethickness{0.5 mm}
+% \put(-25,0){\line(1,0){500}}
+% \end{picture}
+% \vspace{2 mm}
+
+% \noindent \textbf{\large{II. Feedback and Interaction}}
+
+% \begin{picture}(10,0) \linethickness{0.5 mm}
+% \put(-25,0){\line(1,0){500}}
+% \end{picture}
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% \begin{itemize}\setlength\itemsep{-\parsep}
+%     \item[\normalsize{\ding{110}}] \textbf{\emph{Prof. Kuo's F/I}}
+%     \setlength\itemsep{-\parsep}\vspace{-2mm}
+%     \begin{itemize} \setlength\itemsep{-\parsep}
+%         \item  \emph{See the first and last paragraph in the weekly report}\vspace{-3mm}\\
+%     \end{itemize}
+
+% \end{itemize}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%% III. Report Section %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\vspace{1 mm}
+\begin{picture}(10,0)\linethickness{0.5 mm}
+\put(-25,0){\line(1,0){500}}
+\end{picture}
+\vspace{2 mm}
+
+\noindent \textbf{\large{II. Report}}
+
+\begin{picture}(10,0) \linethickness{0.5 mm}
+\put(-25,0){\line(1,0){500}}
+\end{picture}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{enumerate}\setlength\itemsep{-\parsep}
+  % \item \Large\textbf{数据收集 \& 修改训练代码} 
+  \item \Large\textbf{解决代码中的bug} 
+  
+  % \large\textbf{数据收集：} 
+  % \normalsize{
+  % 将训练集根据场景分成不同的文件，
+  % 然后分到两台服务器上进行数据收集，目前已经将训练集收集完，将所有
+  % 的数据整合好，用于之后的训练。
+  % 之后准备收集可见验证集和不可见验证集。
+  % }
+
+  % \large\textbf{修改训练代码：} 
+  \normalsize{
+    % 将大模型适配到 AerialVLN 数据
+    % 集上，欲解决大模型训练 OOM 的问题，数据集是将整个轨迹整合到一起，因此
+    % 读取数据时，将一次性读取一个轨迹所有时间（T） 的数据进入显存，加上
+    % 大模型运行所占据的显存需求，造成 OOM 的问题。使用 Lora 轻量化微调
+    % 大模型和使用 DeepSpeed 进行分片依旧溢出。目前正在尝试使用将一条轨迹
+    % 拆分成每个时间节点输入到模型中训练，然后反向传播，之后将数据移出 GPU 
+    % 换下个时间的数据进入，最后根据总的时间长度算平均的 Loss ，这样也可以
+    % 节约 collate 对批次处理时填充所占有的空间。 
+
+    \begin{itemize}
+      \item NCCL 通信超时
+      
+      分析原因：数据加载不均衡，每个轨迹长度不同，批次内轨迹长度严重不均。且使用 
+      DDP 分到
+      每个 GPU 上的数据的分布具有随机性。因此，解决方法为先遍历数据集，将长度排序
+      然后按照贪心策略分配给各 rank ，使总长度相近。之后再填充数据为批次内最长的
+      轨迹长度。
+      \item CUDA kernel 断言失败 
+      
+      主要问题有：数据预处理错误，将无效动作映射为 -1 但未正确处理；分布式训练
+      批次处理异常；动作空间大小定义不一致；数据集中存在无效标签；首先，排查数据
+      预处理代码，并无问题，然后检查动作空间大小定义不一致的代码，也无问题，
+      分布式训练批次的代码添加了一些断言判断，可在训练中捕获异常。然后检查数据集中
+      是否存在无效标签，检查结果确实存在，不过数量较少，直接删除即可。
+
+    \end{itemize} 
+    
+    % 使用方法将一条轨迹拆分成每个时间节点输入到模型中训练，然后反向传播，
+    % 之后将数据移出 GPU 换下个时间的数据进入，最后根据总的时间长度算平均
+    % 的 Loss ，但是不能直接使用原始数据，collate 函数依然需要填充，但是
+    % 可以填充到 batch 中的最大长度。使用 DDP 出现 NCCL 超时错误，意味着
+    % 多卡训练中通信操作卡死，造成这样的原因是数据长度不平衡导致某些卡处理
+    % 更快/更慢。如果某张卡的轨迹特别长，它会成为瓶颈，其他卡等待时可能因
+    % 长时间无通信而超时。
+    % \\
+  }
+    % \begin{itemize}
+    %   \item 原始的指令文本
+    %   \item RGB 图像 
+    % \end{itemize} 
+  % 原始收集的数据集中，只保存了处理好的 RGB 图像特征，未保留原始 RGB 图像，还有原始指令文本也需要保留，训练时需要使用大模型Tokenizer 进行处理。
+
+  % \item \Large\textbf{跟蒋老师学习具身智能}
+  % \normalsize{
+  %   学习了应该如何去定义具身智能。对于具身智能来说，大模型相当于大脑，
+  %   大脑是相当重要的，但是还要把身体包含进来，身体是具身智能最重要的
+  %   一部分，因为具身智能需要与环境进行感知，所感知的信息传输给大脑
+  %   进行信息的提取和转换成能够理解的知识。此外，如何能够让智能体
+  %   在与环境交互的过程中持续的学习知识，而不是利用预先定义好的策略
+  %   让智能体重复的做同样的事情也是未来需要关注的事情。Sim2Real 相关的
+  %   实验具有一定的局限性，对于算力和数据的高精度性要求较高，且对于智能体
+  %   的泛化性有一定的挑战，稍微偏移的场景可能会产生不可控制的结果。
+  %   对于未来的想法，强化学习和模仿学习是可以值得探索的空间。
+  %   最后，对于我们想要做的算法，建议要上真机实验，模拟器上的空间和物体
+  %   特权弱化了真实的场景，对于真实的机器人来说，底层控制和上层算法同样
+  %   重要。
+  % }
+
+  % \item \Large\textbf{无人机视觉语言导航}
+  \normalsize{
+    % 无人机视觉语言导航主要挑战有：跨模态语义对齐困难、
+    % 三维空间推理能力不足、
+    % 长时序空间推理与累积误差、机载算力严重受限等。现在大多
+    % 方法主要集中在解决长时序空间推理与累积误差这个问题，为
+    % 解决这个问题，应该提出一个有效整合时空上下文信息的方法。
+    % 目前模型是一次性接收指令后“开环”执行。如果可以引入
+    % “闭环”交互，让无人机在导航过程中能主动提问来消除歧义。
+    % 这种交互过程本身就会产生新的时空上下文。这些新信息会
+    % 被用于更新记忆并指导后续导航，形成一个
+    % “感知-行动-对话-再感知”的增强回路。
+  }
+
+
+ 
+  % \item \large\textbf{Literature Review} \\
+  % \normalsize{Contents}\\
+  % Title...\\
+  % Content....\\
+  % Content....\\
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\begin{figure}[ht]
+%\centering \scalebox{0.6}[0.6]{\includegraphics{fig/etx3}}
+%\caption{Expected transmission counts
+%}\label{fig:maxduNei}\vspace{-1 mm}
+%\end{figure}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% \item \textbf{(Report B)} Journal 1 final result\\
+% \begin{itemize} \setlength\itemsep{-\parsep}\vspace{-5mm}
+%     \item Blablabla\cite{ts.36.104} shows blabla \vspace{-1mm}\\
+%     \item Based on the result of \cite{rhpark05}, we can blabla  \vspace{-1mm}\\
+%     \item In contrast with the algorithm introduced by \cite{Sheldon&Seo&Torkildson&Rodwell09}, Hit and Crook Algorithm (HCA) we present here has blablas   \vspace{-1mm}\\
+% \end{itemize}
+
+%%%%% If you need to add references related to report, use this %%
+\bibliographystyle{IEEEtran}
+%\bibliography{IEEEabrv,johndoe}
+\bibliography{IEEEabrv,836673citation}
+
+\vspace{3 mm}
+
+\end{enumerate}
+
+
+%%%%%%%%%%%%%%%%% IV. Plan for the next week section %%%%%%%%%%%%%%%%%%%%
+\vspace{1 mm}
+\begin{picture}(10,0)\linethickness{0.5 mm}
+\put(-25,0){\line(1,0){500}}
+\end{picture}
+\vspace{2 mm}
+
+\noindent\textbf{\large{III. Plan for the next week}}
+
+\begin{picture}(10,0) \linethickness{0.5 mm}
+\put(-25,0){\line(1,0){500}}
+\end{picture}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\begin{itemize}\setlength\itemsep{-\parsep}   %
+%\begin{itemize}\setlength\itemsep{-\parsep}\vspace{-2mm}
+\begin{itemize}
+  \item[\normalsize{\ding{110}}] 修改好了bug，先用服务器跑 1-2 个 epoch 检查是
+  否有其他问题，然后租借 8 卡服务器进行训练和调参。 \vspace{-3 mm}
+  \item[\normalsize{\ding{110}}] 阅读论文，思考一下闭环交互的导航的
+  具体实现过程。 \vspace{-3 mm}\\
+  % \subitem {\footnotesize{\ding{108}}} I believe you understand what I mean\\
+ 
+\end{itemize}                      % --> To Here
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%% Milestone Section %%
+% \vspace{1 mm}
+% \begin{picture}(10,0)\linethickness{0.5 mm}
+% \put(-25,0){\line(1,0){500}}
+% \end{picture}
+% \vspace{2 mm}
+
+% \noindent \textbf{\large{V. Milestone}}
+
+% \begin{picture}(10,0) \linethickness{0.5 mm}
+% \put(-25,0){\line(1,0){500}}
+% \end{picture}
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \\ \\
+% \textbf{\emph{Main Goal of this Semester : Publish a paper to Whiskey conference chaired by Dr. Quack} }\\
+% Subgoal : Keeping motivation \\
+% \\ \textbf{\emph{Plan to achieve the goal}}
+
+
+% \begin{itemize} \setlength\itemsep{-\parsep}% <-- Modify the contents  for 'V. Milestone'
+
+% \item ...
+
+% \item ...
+% %    \subitem -
+% \end{itemize}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%\newpage
+%
+%\begin{picture}(10,0) \linethickness{0.5 mm}
+%\put(-25,0){\line(1,0){450}}
+%\end{picture}
+%\begin{center}
+%\textbf{\large{Appendix}} ~~Aging analysis of topology
+%construction schemes
+%\end{center}
+%
+%\begin{picture}(10,0) \linethickness{0.5 mm}
+%\put(-25,0){\line(1,0){450}}
+%\end{picture}
+%\vspace{3mm}\\
+
+
+\end{document}
