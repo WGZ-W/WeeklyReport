@@ -59,7 +59,7 @@
 \end{picture}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{itemize} %\setlength\itemsep{-\parsep}   %
-  \item[\normalsize{\ding{110}}] 解决 AerialVLN 代码中的 bug，开始训练。 Fixed bugs in the AerialVLN code and started training.  \vspace{-3 mm}\\
+  \item[\normalsize{\ding{110}}] Fixed bugs in the AerialVLN code and started training.  \vspace{-3 mm}\\
   % \subitem {\footnotesize{\ding{108}}} 
   % \item[\normalsize{\ding{110}}] 跟蒋老师学习具身智能  \vspace{-3 mm}\\
 \end{itemize}                      % --> To Here
@@ -107,7 +107,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{enumerate}\setlength\itemsep{-\parsep}
   % \item \Large\textbf{数据收集 \& 修改训练代码} 
-  \item \Large\textbf{解决代码中的bug / Fixed bugs in the code} 
+  \item \Large\textbf{ Fixed bugs in the code} 
   
   % \large\textbf{数据收集：} 
   % \normalsize{
@@ -129,22 +129,32 @@
     % 节约 collate 对批次处理时填充所占有的空间。 
 
     \begin{itemize}
-      \item NCCL 通信超时 / NCCL communication timeout
+      \item  NCCL communication timeout
       
-      分析原因：数据加载不均衡，每个轨迹长度不同，批次内轨迹长度严重不均。且使用 
-      DDP 分到
-      每个 GPU 上的数据的分布具有随机性。因此，解决方法为先遍历数据集，将长度排序
-      然后按照贪心策略分配给各 rank ，使总长度相近。之后再填充数据为批次内最长的
-      轨迹长度。
-      Cause analysis: data loading is imbalanced. Each trajectory has a different length, and trajectory lengths within a batch are severely uneven. In addition, the data distributed to each GPU by DDP is random. Therefore, the solution is to first traverse the dataset, sort samples by length, and then assign them to each rank using a greedy strategy so that the total lengths are similar. After that, the data is padded to the longest trajectory length within each batch.
-      \item CUDA kernel 断言失败 / CUDA kernel assertion failure 
       
-      主要问题有：数据预处理错误，将无效动作映射为 -1 但未正确处理；分布式训练
-      批次处理异常；动作空间大小定义不一致；数据集中存在无效标签；首先，排查数据
-      预处理代码，并无问题，然后检查动作空间大小定义不一致的代码，也无问题，
-      分布式训练批次的代码添加了一些断言判断，可在训练中捕获异常。然后检查数据集中
-      是否存在无效标签，检查结果确实存在，不过数量较少，直接删除即可。
-      The main issues include: incorrect data preprocessing, where invalid actions were mapped to -1 but not handled properly; abnormal batch processing in distributed training; inconsistent action-space size definitions; and invalid labels in the dataset. First, I checked the data preprocessing code and found no problem. Then I checked the code defining the action-space size and found no problem either. Some assertions were added to the distributed training batch-processing code to catch exceptions during training. Finally, I checked whether invalid labels existed in the dataset. The results showed that they did exist, but the number was small, so they can be removed directly.
+      Cause analysis: data loading is imbalanced. 
+      Each trajectory has a different length, and trajectory lengths within a batch are severely uneven. 
+      In addition, the data distributed to each GPU by DDP is random. 
+      Therefore, the solution is to first traverse the dataset, 
+      sort samples by length, and then assign them to each rank 
+      using a greedy strategy so that the total lengths are similar. 
+      After that, the data is padded to the longest trajectory length within each batch.
+      
+      \item  CUDA kernel assertion failure 
+      
+      The main issues include: 
+      incorrect data preprocessing, 
+      where invalid actions were mapped to -1 
+      but not handled properly; 
+      abnormal batch processing in distributed training; 
+      inconsistent action-space size definitions; 
+      and invalid labels in the dataset. 
+      First, I checked the data preprocessing code and found no problem. 
+      Then I checked the code defining the action-space size and found no problem either. 
+      Some assertions were added to the distributed training batch-processing 
+      code to catch exceptions during training. 
+      Finally, I checked whether invalid labels existed in the dataset. 
+      The results showed that they did exist, but the number was small, so they can be removed directly.
 
     \end{itemize} 
     
@@ -242,10 +252,12 @@
 %\begin{itemize}\setlength\itemsep{-\parsep}   %
 %\begin{itemize}\setlength\itemsep{-\parsep}\vspace{-2mm}
 \begin{itemize}
-  \item[\normalsize{\ding{110}}] 修改好了bug，先用服务器跑 1-2 个 epoch 检查是
-  否有其他问题，然后租借 8 卡服务器进行训练和调参。 The bugs have been fixed. First, run 1-2 epochs on the server to check whether there are any other issues. Then rent an 8-GPU server for training and hyperparameter tuning. \vspace{-3 mm}
-  \item[\normalsize{\ding{110}}] 阅读论文，思考一下闭环交互的导航的
-  具体实现过程。 Read papers and think about the specific implementation process of closed-loop interactive navigation. \vspace{-3 mm}\\
+  \item[\normalsize{\ding{110}}] The bugs have been fixed. 
+  First, run 1-2 epochs on the server to check whether 
+  there are any other issues. 
+  Then rent an 8-GPU server for training and hyperparameter tuning. \vspace{-3 mm}
+  \item[\normalsize{\ding{110}}] Read CVPR
+   papers and think about the specific implementation process of closed-loop interactive navigation. \vspace{-3 mm}\\
   % \subitem {\footnotesize{\ding{108}}} I believe you understand what I mean\\
  
 \end{itemize}                      % --> To Here
