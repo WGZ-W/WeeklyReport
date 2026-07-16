@@ -40,7 +40,8 @@
 \begin{document}
 
 %% Main Title Section %%
-\weekly{Wei Guanzhao}{2026}{Summer}{07/11}{04}
+% \weekly{Wei Guanzhao}{2026}{Summer}{07/11}{04}
+\weekly{Wei Guanzhao}{2026}{Summer}{07/17}{05}
 
 
 
@@ -58,10 +59,15 @@
 \put(-25,0){\line(1,0){500}}
 \end{picture}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \begin{itemize} %\setlength\itemsep{-\parsep}   %
+%   \item[\normalsize{\ding{110}}] Fixed bugs in the AerialVLN code and started training.  \vspace{-3 mm}\\
+%   % \subitem {\footnotesize{\ding{108}}} 
+%   % \item[\normalsize{\ding{110}}] 跟蒋老师学习具身智能  \vspace{-3 mm}\\
+% \end{itemize}                      % --> To Here
 \begin{itemize} %\setlength\itemsep{-\parsep}   %
-  \item[\normalsize{\ding{110}}] Fixed bugs in the AerialVLN code and started training.  \vspace{-3 mm}\\
+  \item[\normalsize{\ding{110}}] Think about how to revise and extend the paper for journal submission  \vspace{-3 mm}\\
   % \subitem {\footnotesize{\ding{108}}} 
-  % \item[\normalsize{\ding{110}}] 跟蒋老师学习具身智能  \vspace{-3 mm}\\
+  \item[\normalsize{\ding{110}}] Survey the development of World model in UAV vision-language navigation  \vspace{-3 mm}
 \end{itemize}                      % --> To Here
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -107,65 +113,38 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{enumerate}\setlength\itemsep{-\parsep}
   % \item \Large\textbf{数据收集 \& 修改训练代码} 
-  \item \Large\textbf{ Fixed bugs in the code} 
+  \item \Large\textbf{Revise and extend the paper for journal submission} 
   
-  % \large\textbf{数据收集：} 
-  % \normalsize{
-  % 将训练集根据场景分成不同的文件，
-  % 然后分到两台服务器上进行数据收集，目前已经将训练集收集完，将所有
-  % 的数据整合好，用于之后的训练。
-  % 之后准备收集可见验证集和不可见验证集。
-  % }
-
-  % \large\textbf{修改训练代码：} 
+  % \large\textbf{Data Collection:} 
   \normalsize{
-    % 将大模型适配到 AerialVLN 数据
-    % 集上，欲解决大模型训练 OOM 的问题，数据集是将整个轨迹整合到一起，因此
-    % 读取数据时，将一次性读取一个轨迹所有时间（T） 的数据进入显存，加上
-    % 大模型运行所占据的显存需求，造成 OOM 的问题。使用 Lora 轻量化微调
-    % 大模型和使用 DeepSpeed 进行分片依旧溢出。目前正在尝试使用将一条轨迹
-    % 拆分成每个时间节点输入到模型中训练，然后反向传播，之后将数据移出 GPU 
-    % 换下个时间的数据进入，最后根据总的时间长度算平均的 Loss ，这样也可以
-    % 节约 collate 对批次处理时填充所占有的空间。 
+      Analyze the current methodological issues in the paper, consider a V2 version, 
+      find a suitable journal, add results on the AerialVLN dataset, and submit.
+  }
 
+  % \large\textbf{Training Code Modification:} 
+  \normalsize{
+    % (Commented out original Chinese content, kept as is)
+  }
+
+  \item \Large\textbf{Survey the development of world models in UAV vision-language navigation}
+  
+  \normalsize{
+    The core positioning of world models is to shift from "reactive execution" to "predictive planning".
     \begin{itemize}
-      \item  NCCL communication timeout
-      
-      
-      Cause analysis: data loading is imbalanced. 
-      Each trajectory has a different length, and trajectory lengths within a batch are severely uneven. 
-      In addition, the data distributed to each GPU by DDP is random. 
-      Therefore, the solution is to first traverse the dataset, 
-      sort samples by length, and then assign them to each rank 
-      using a greedy strategy so that the total lengths are similar. 
-      After that, the data is padded to the longest trajectory length within each batch.
-      
-      \item  CUDA kernel assertion failure 
-      
-      The main issues include: 
-      incorrect data preprocessing, 
-      where invalid actions were mapped to -1 
-      but not handled properly; 
-      abnormal batch processing in distributed training; 
-      inconsistent action-space size definitions; 
-      and invalid labels in the dataset. 
-      First, I checked the data preprocessing code and found no problem. 
-      Then I checked the code defining the action-space size and found no problem either. 
-      Some assertions were added to the distributed training batch-processing 
-      code to catch exceptions during training. 
-      Finally, I checked whether invalid labels existed in the dataset. 
-      The results showed that they did exist, but the number was small, so they can be removed directly.
-
+      \item Explicitly transform abstract natural language instructions into future first-person visual sequences;
+      \item Provide motion priors and spatial foresight. In complex urban scenes (severe occlusion, drastic viewpoint changes), 
+      world model allow the agent to "see" the environment around turns in advance by generating future frames, 
+      avoiding the "short-sightedness" of pure historical observation policies.
+      \item Leverage imagined future dynamic features to optimize decision-making, 
+      while world model adjust generated content according to planned trajectories, achieving closed-loop collaborative training.
     \end{itemize} 
-    
-    % 使用方法将一条轨迹拆分成每个时间节点输入到模型中训练，然后反向传播，
-    % 之后将数据移出 GPU 换下个时间的数据进入，最后根据总的时间长度算平均
-    % 的 Loss ，但是不能直接使用原始数据，collate 函数依然需要填充，但是
-    % 可以填充到 batch 中的最大长度。使用 DDP 出现 NCCL 超时错误，意味着
-    % 多卡训练中通信操作卡死，造成这样的原因是数据长度不平衡导致某些卡处理
-    % 更快/更慢。如果某张卡的轨迹特别长，它会成为瓶颈，其他卡等待时可能因
-    % 长时间无通信而超时。
-    % \\
+
+    There are also some issues to be addressed:
+    \begin{itemize}
+      \item Significant inference latency and computational burden (core pain point);
+      \item Insufficient pixel-level generation quality and spatiotemporal consistency;
+      \item Sim-to-Real transfer robustness;
+    \end{itemize} 
   }
     % \begin{itemize}
     %   \item 原始的指令文本
@@ -251,16 +230,30 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %\begin{itemize}\setlength\itemsep{-\parsep}   %
 %\begin{itemize}\setlength\itemsep{-\parsep}\vspace{-2mm}
-\begin{itemize}
-  \item[\normalsize{\ding{110}}] The bugs have been fixed. 
-  First, run 1-2 epochs on the server to check whether 
-  there are any other issues. 
-  Then rent an 8-GPU server for training and hyperparameter tuning. \vspace{-3 mm}
-  \item[\normalsize{\ding{110}}] Read CVPR
-   papers and think about the specific implementation process of closed-loop interactive navigation. \vspace{-3 mm}\\
-  % \subitem {\footnotesize{\ding{108}}} I believe you understand what I mean\\
+% \begin{itemize}
+%   \item[\normalsize{\ding{110}}] The bugs have been fixed. 
+%   First, run 1-2 epochs on the server to check whether 
+%   there are any other issues. 
+%   Then rent an 8-GPU server for training and hyperparameter tuning. \vspace{-3 mm}
+%   \item[\normalsize{\ding{110}}] Read CVPR
+%    papers and think about the specific implementation process of closed-loop interactive navigation. \vspace{-3 mm}\\
+%   % \subitem {\footnotesize{\ding{108}}} I believe you understand what I mean\\
  
-\end{itemize}                      % --> To Here
+% \end{itemize}                      % --> To Here
+
+\begin{itemize}
+  \item[\normalsize{\ding{110}}] 
+    Survey potential journals for extension, and think about how to improve the methodological issues of the paper \vspace{-3 mm}\\
+  \item[\normalsize{\ding{110}}] 
+    Read papers and think about problems in UAV visual dialogue navigation.
+    \begin{itemize}
+      \item Study improving the timing of question asking
+      \item Study the structure of model-generated questions
+      \item Study memory mechanisms based on topological graphs or other data structures
+    \end{itemize}
+    % \vspace{-3 mm}\\
+  % \subitem {\footnotesize{\ding{108}}} I believe you understand what I mean\\
+\end{itemize}       
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
